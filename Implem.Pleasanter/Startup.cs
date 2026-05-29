@@ -383,8 +383,12 @@ namespace Implem.Pleasanter.NetCore
             return list;
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(
+            IApplicationBuilder app,
+            IWebHostEnvironment env,
+            IHostApplicationLifetime lifetime)
         {
+            SiteInfo.ApplicationLifetime = lifetime;
             app.UseForwardedHeaders();
             app.UseCurrentRequestContext();
             if (env.IsDevelopment())

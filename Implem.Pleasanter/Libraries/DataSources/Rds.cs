@@ -413,6 +413,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 case "Depts": return "DeptId";
                 case "Groups": return "GroupId";
                 case "McpLogs": return "McpLogId";
+                case "Parameters": return "ParameterId";
                 case "Registrations": return "RegistrationId";
                 case "Sites": return "SiteId";
                 case "SysLogs": return "SysLogId";
@@ -602,6 +603,17 @@ namespace Implem.Pleasanter.Libraries.DataSources
         }
 
         public static SqlStatement OutgoingMailsStatement(
+            string commandText,
+            SqlParamCollection param = null)
+        {
+            return new SqlStatement
+            {
+                CommandText = commandText,
+                SqlParamCollection = param
+            };
+        }
+
+        public static SqlStatement ParametersStatement(
             string commandText,
             SqlParamCollection param = null)
         {
@@ -1412,6 +1424,25 @@ namespace Implem.Pleasanter.Libraries.DataSources
                                 ? $"\"{column.Name}\""
                                 : null;
                     }
+                case "Parameters":
+                    switch (column.Name)
+                    {
+                        case "ParameterId": return "\"ParameterId\"";
+                        case "Ver": return "\"Ver\"";
+                        case "Title": return "\"Title\"";
+                        case "Body": return "\"Body\"";
+                        case "Comments": return "\"Comments\"";
+                        case "Creator": return "\"Creator\"";
+                        case "Updator": return "\"Updator\"";
+                        case "CreatedTime": return "\"CreatedTime\"";
+                        case "UpdatedTime": return "\"UpdatedTime\"";
+                        case "VerUp": return "\"VerUp\"";
+                        case "Timestamp": return "\"Timestamp\"";
+                        default: 
+                            return Def.ExtendedColumnTypes.ContainsKey(column?.Name ?? string.Empty)
+                                ? $"\"{column.Name}\""
+                                : null;
+                    }
                 case "Passkeys":
                     switch (column.Name)
                     {
@@ -1678,6 +1709,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                         case "Language": return "\"Language\"";
                         case "TimeZone": return "\"TimeZone\"";
                         case "TenantSettings": return "\"TenantSettings\"";
+                        case "RestartScheduledTime": return "\"RestartScheduledTime\"";
                         case "Comments": return "\"Comments\"";
                         case "Creator": return "\"Creator\"";
                         case "Updator": return "\"Updator\"";
@@ -3351,6 +3383,73 @@ namespace Implem.Pleasanter.Libraries.DataSources
                                     function: function)
                                 : self;
                     }
+                case "Parameters":
+                    switch (column.Name)
+                    {
+                        case "ParameterId":
+                            return self.Parameters_ParameterId(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "Ver":
+                            return self.Parameters_Ver(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "Title":
+                            return self.Parameters_Title(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "Body":
+                            return self.Parameters_Body(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "Comments":
+                            return self.Parameters_Comments(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "Creator":
+                            return self.Parameters_Creator(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "Updator":
+                            return self.Parameters_Updator(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "CreatedTime":
+                            return self.Parameters_CreatedTime(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "UpdatedTime":
+                            return self.Parameters_UpdatedTime(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        default:
+                            return Def.ExtendedColumnTypes.ContainsKey(column?.Name ?? string.Empty)
+                                ? self.Add(
+                                    columnBracket: $"\"{column.Name}\"",
+                                    orderType: orderType,
+                                    tableName: column.TableName(),
+                                    isNullValue: isNullValue,
+                                    function: function)
+                                : self;
+                    }
                 case "Passkeys":
                     switch (column.Name)
                     {
@@ -4492,6 +4591,12 @@ namespace Implem.Pleasanter.Libraries.DataSources
                                 function: function);
                         case "TenantSettings":
                             return self.Tenants_TenantSettings(
+                                tableName: column.TableName(),
+                                orderType: orderType,
+                                isNullValue: isNullValue,
+                                function: function);
+                        case "RestartScheduledTime":
+                            return self.Tenants_RestartScheduledTime(
                                 tableName: column.TableName(),
                                 orderType: orderType,
                                 isNullValue: isNullValue,
@@ -6414,6 +6519,48 @@ namespace Implem.Pleasanter.Libraries.DataSources
             };
         }
 
+        public static SqlSelect SelectParameters(
+            string dataTableName = null,
+            Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
+            string _as = null,
+            SqlColumnCollection column = null,
+            SqlJoinCollection join = null,
+            SqlWhereCollection where = null,
+            SqlGroupByCollection groupBy = null,
+            SqlHavingCollection having = null,
+            SqlOrderByCollection orderBy = null,
+            SqlParamCollection param = null,
+            bool distinct = false,
+            int top = 0,
+            int offset = 0,
+            int pageSize = 0,
+            Sqls.UnionTypes unionType = Sqls.UnionTypes.None,
+            bool _using = true)
+        {
+            return new SqlSelect
+            {
+                DataTableName = dataTableName,
+                TableType = tableType,
+                TableBracket = "\"Parameters\"",
+                HistoryTableBracket = "\"Parameters_history\"",
+                DeletedTableBracket = "\"Parameters_deleted\"",
+                As = _as,
+                SqlColumnCollection = column,
+                SqlJoinCollection = join,
+                SqlWhereCollection = where,
+                SqlGroupByCollection = groupBy,
+                SqlHavingCollection = having,
+                SqlOrderByCollection = orderBy,
+                SqlParamCollection = param,
+                Distinct = distinct,
+                Top = top,
+                Offset = offset,
+                PageSize = pageSize,
+                UnionType = unionType,
+                Using = _using
+            };
+        }
+
         public static SqlSelect SelectPasskeys(
             string dataTableName = null,
             Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
@@ -7338,6 +7485,26 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 TableBracket = "\"OutgoingMails\"",
                 HistoryTableBracket = "\"OutgoingMails_history\"",
                 DeletedTableBracket = "\"OutgoingMails_deleted\"",
+                SqlJoinCollection = join,
+                SqlWhereCollection = where,
+                Using = _using
+            };
+        }
+
+        public static SqlExists ExistsParameters(
+            Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
+            bool not = false,
+            SqlJoinCollection join = null,
+            SqlWhereCollection where = null,
+            bool _using = true)
+        {
+            return new SqlExists
+            {
+                TableType = tableType,
+                Not = not,
+                TableBracket = "\"Parameters\"",
+                HistoryTableBracket = "\"Parameters_history\"",
+                DeletedTableBracket = "\"Parameters_deleted\"",
                 SqlJoinCollection = join,
                 SqlWhereCollection = where,
                 Using = _using
@@ -8536,6 +8703,66 @@ namespace Implem.Pleasanter.Libraries.DataSources
                     template: "set identity_insert \"OutgoingMails_History\" on;"))
                 : new SqlStatement(factory.SqlCommandText.CreateIdentityInsert(
                     template: "set identity_insert \"OutgoingMails_History\" off;"));
+        }
+
+        public static SqlInsert InsertParameters(
+            string dataTableName = null,
+            bool selectIdentity = false,
+            Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
+            SqlParamCollection param = null,
+            SqlStatement select = null,
+            bool addUpdatorParam = true,
+            string _if = null,
+            bool _using = true)
+        {
+            return new SqlInsert
+            {
+                DataTableName = dataTableName,
+                TableType = tableType,
+                TableBracket = "\"Parameters\"",
+                IdentityColumnName = "\"ParameterId\"",
+                HistoryTableBracket = "\"Parameters_history\"",
+                DeletedTableBracket = "\"Parameters_deleted\"",
+                SelectIdentity = selectIdentity,
+                SqlParamCollection = param,
+                Select = select,
+                AddUpdatorParam = addUpdatorParam,
+                If = _if,
+                Using = _using
+            };
+        }
+
+        public static SqlStatement IdentityInsertParameters(
+            ISqlObjectFactory factory,
+            bool on)
+        {
+            return on
+                ? new SqlStatement(factory.SqlCommandText.CreateIdentityInsert(
+                    template: "set identity_insert \"Parameters\" on;"))
+                : new SqlStatement(factory.SqlCommandText.CreateIdentityInsert(
+                    template: "set identity_insert \"Parameters\" off;"));
+        }
+
+        public static SqlStatement IdentityInsertParameters_Deleted(
+            ISqlObjectFactory factory,
+            bool on)
+        {
+            return on
+                ? new SqlStatement(factory.SqlCommandText.CreateIdentityInsert(
+                    template: "set identity_insert \"Parameters_Deleted\" on;"))
+                : new SqlStatement(factory.SqlCommandText.CreateIdentityInsert(
+                    template: "set identity_insert \"Parameters_Deleted\" off;"));
+        }
+
+        public static SqlStatement IdentityInsertParameters_History(
+            ISqlObjectFactory factory,
+            bool on)
+        {
+            return on
+                ? new SqlStatement(factory.SqlCommandText.CreateIdentityInsert(
+                    template: "set identity_insert \"Parameters_History\" on;"))
+                : new SqlStatement(factory.SqlCommandText.CreateIdentityInsert(
+                    template: "set identity_insert \"Parameters_History\" off;"));
         }
 
         public static SqlInsert InsertPasskeys(
@@ -9818,6 +10045,32 @@ namespace Implem.Pleasanter.Libraries.DataSources
             };
         }
 
+        public static SqlUpdate UpdateParameters(
+            string dataTableName = null,
+            Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
+            SqlWhereCollection where = null,
+            SqlParamCollection param = null,
+            bool addUpdatorParam = true,
+            bool addUpdatedTimeParam = true,
+            string _if = null,
+            bool _using = true)
+        {
+            return new SqlUpdate
+            {
+                DataTableName = dataTableName,
+                TableType = tableType,
+                TableBracket = "\"Parameters\"",
+                HistoryTableBracket = "\"Parameters_history\"",
+                DeletedTableBracket = "\"Parameters_deleted\"",
+                SqlWhereCollection = where,
+                SqlParamCollection = param,
+                AddUpdatorParam = addUpdatorParam,
+                AddUpdatedTimeParam = addUpdatedTimeParam,
+                If = _if,
+                Using = _using
+            };
+        }
+
         public static SqlUpdate UpdatePasskeys(
             string dataTableName = null,
             Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
@@ -10628,6 +10881,34 @@ namespace Implem.Pleasanter.Libraries.DataSources
             };
         }
 
+        public static SqlUpdateOrInsert UpdateOrInsertParameters(
+            string dataTableName = null,
+            Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
+            bool selectIdentity = false,
+            SqlWhereCollection where = null,
+            SqlParamCollection param = null,
+            bool addUpdatorParam = true,
+            bool addUpdatedTimeParam = true,
+            string _if = null,
+            bool _using = true)
+        {
+            return new SqlUpdateOrInsert
+            {
+                DataTableName = dataTableName,
+                TableType = tableType,
+                TableBracket = "\"Parameters\"",
+                HistoryTableBracket = "\"Parameters_history\"",
+                DeletedTableBracket = "\"Parameters_deleted\"",
+                SelectIdentity = selectIdentity,
+                SqlWhereCollection = where,
+                SqlParamCollection = param,
+                AddUpdatorParam = addUpdatorParam,
+                AddUpdatedTimeParam = addUpdatedTimeParam,
+                If = _if,
+                Using = _using
+            };
+        }
+
         public static SqlUpdateOrInsert UpdateOrInsertPasskeys(
             string dataTableName = null,
             Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
@@ -11378,6 +11659,28 @@ namespace Implem.Pleasanter.Libraries.DataSources
             };
         }
 
+        public static SqlDelete DeleteParameters(
+            ISqlObjectFactory factory,
+            string dataTableName = null,
+            SqlWhereCollection where = null,
+            SqlParamCollection param = null,
+            string _if = null,
+            bool _using = true)
+        {
+            return new SqlDelete()
+            {
+                DataTableName = dataTableName,
+                CommandText = DeleteParametersStatement(factory: factory),
+                TableBracket = "\"Parameters\"",
+                HistoryTableBracket = "\"Parameters_history\"",
+                DeletedTableBracket = "\"Parameters_deleted\"",
+                SqlWhereCollection = where,
+                SqlParamCollection = param,
+                If = _if,
+                Using = _using
+            };
+        }
+
         public static SqlDelete DeletePasskeys(
             ISqlObjectFactory factory,
             string dataTableName = null,
@@ -12008,6 +12311,26 @@ namespace Implem.Pleasanter.Libraries.DataSources
             };
         }
 
+        public static SqlPhysicalDelete PhysicalDeleteParameters(
+            Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
+            SqlWhereCollection where = null,
+            SqlParamCollection param = null,
+            string _if = null,
+            bool _using = true)
+        {
+            return new SqlPhysicalDelete()
+            {
+                TableType = tableType,
+                TableBracket = "\"Parameters\"",
+                HistoryTableBracket = "\"Parameters_history\"",
+                DeletedTableBracket = "\"Parameters_deleted\"",
+                SqlWhereCollection = where,
+                SqlParamCollection = param,
+                If = _if,
+                Using = _using
+            };
+        }
+
         public static SqlPhysicalDelete PhysicalDeletePasskeys(
             Sqls.TableTypes tableType = Sqls.TableTypes.Normal,
             SqlWhereCollection where = null,
@@ -12601,6 +12924,26 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 TableBracket = "\"OutgoingMails\"",
                 HistoryTableBracket = "\"OutgoingMails_history\"",
                 DeletedTableBracket = "\"OutgoingMails_deleted\"",
+                SqlWhereCollection = where,
+                SqlParamCollection = param,
+                If = _if,
+                Using = _using
+            };
+        }
+
+        public static SqlRestore RestoreParameters(
+            ISqlObjectFactory factory,
+            SqlWhereCollection where = null,
+            SqlParamCollection param = null,
+            string _if = null,
+            bool _using = true)
+        {
+            return new SqlRestore()
+            {
+                CommandText = RestoreParametersStatement(factory: factory), 
+                TableBracket = "\"Parameters\"",
+                HistoryTableBracket = "\"Parameters_history\"",
+                DeletedTableBracket = "\"Parameters_deleted\"",
                 SqlWhereCollection = where,
                 SqlParamCollection = param,
                 If = _if,
@@ -13295,6 +13638,26 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 addUpdatorParam: false);
         }
 
+        public static SqlStatement ParametersCopyToStatement(SqlWhereCollection where, Sqls.TableTypes tableType, List<String> columnNames)
+        {
+            var column = new ParametersColumnCollection();
+            var param = new ParametersParamCollection();
+            column.ParameterId(function: Sqls.Functions.SingleColumn); param.ParameterId();
+            column.Ver(function: Sqls.Functions.SingleColumn); param.Ver();
+            column.Title(function: Sqls.Functions.SingleColumn); param.Title();
+            column.Body(function: Sqls.Functions.SingleColumn); param.Body();
+            column.Comments(function: Sqls.Functions.SingleColumn); param.Comments();
+            column.Creator(function: Sqls.Functions.SingleColumn); param.Creator();
+            column.Updator(function: Sqls.Functions.SingleColumn); param.Updator();
+            column.CreatedTime(function: Sqls.Functions.SingleColumn); param.CreatedTime();
+            column.UpdatedTime(function: Sqls.Functions.SingleColumn); param.UpdatedTime();
+            return InsertParameters(
+                tableType: tableType,
+                param: param,
+                select: SelectParameters(column: column, where: where),
+                addUpdatorParam: false);
+        }
+
         public static SqlStatement PasskeysCopyToStatement(SqlWhereCollection where, Sqls.TableTypes tableType, List<String> columnNames)
         {
             var column = new PasskeysColumnCollection();
@@ -13559,6 +13922,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
             column.Language(function: Sqls.Functions.SingleColumn); param.Language();
             column.TimeZone(function: Sqls.Functions.SingleColumn); param.TimeZone();
             column.TenantSettings(function: Sqls.Functions.SingleColumn); param.TenantSettings();
+            column.RestartScheduledTime(function: Sqls.Functions.SingleColumn); param.RestartScheduledTime();
             column.Comments(function: Sqls.Functions.SingleColumn); param.Comments();
             column.Creator(function: Sqls.Functions.SingleColumn); param.Creator();
             column.Updator(function: Sqls.Functions.SingleColumn); param.Updator();
@@ -15324,6 +15688,99 @@ namespace Implem.Pleasanter.Libraries.DataSources
                         default: break;
                     }
                     var statement = SelectOutgoingMails(
+                        dataTableName: "Aggregation" + data.Index,
+                        column: column,
+                        where: where,
+                        groupBy: groupBy);
+                    statementCollection.Add(statement);
+                });
+            return statementCollection;
+        }
+
+        public static IEnumerable<SqlStatement> ParametersAggregations(
+        Context context,
+        IEnumerable<Aggregation> aggregations,
+        Sqls.TableTypes tableType,
+        SqlWhereCollection where,
+        SqlParamCollection param)
+        {
+            var statementCollection = new List<SqlStatement>()
+            {
+                SelectParameters(
+                    dataTableName: "Count",
+                    tableType: tableType,
+                    column: ParametersColumn().ParametersCount(),
+                    where: where,
+                    param: param)
+            };
+            if (tableType != Sqls.TableTypes.Normal)
+            {
+                return statementCollection;
+            }
+            aggregations
+                .Select((o, i) => new { Aggregation = o, Index = i })
+                .ForEach(data =>
+                {
+                    var groupBy = ParametersGroupBy();
+                    var column = ParametersColumn();
+                    switch (data.Aggregation.GroupBy)
+                    {
+                        case "\"NotGroupBy\"":
+                            break;
+                        default:
+                            if (Def.ExtendedColumnTypes.TryGetValue(
+                                data.Aggregation.GroupBy ?? string.Empty,
+                                out var aggregationColumnTypeName))
+                            {
+                                var defaultValue = aggregationColumnTypeName switch
+                                {
+                                    "Check" => context.Sqls.FalseString,
+                                    "Class" => "''",
+                                    _ => (string)null
+                                };
+                                if (defaultValue != null)
+                                {
+                                    var columnBracket = $"({context.Sqls.IsNull}(#TableBracket#.\"{data.Aggregation.GroupBy}\",{defaultValue}))";
+                                    groupBy.Add(
+                                        columnBracket: columnBracket,
+                                        tableName: "Parameters");
+                                    column.Add(
+                                        columnBracket: columnBracket,
+                                        columnName: data.Aggregation.GroupBy);
+                                    break;
+                                }
+                            }
+                            groupBy.ParametersGroupBy(columnName: data.Aggregation.GroupBy);
+                            column.ParametersColumn(columnName: data.Aggregation.GroupBy);
+                            break;
+                    }
+                    switch (data.Aggregation.Type)
+                    {
+                        case Aggregation.Types.Count:
+                            column.ParametersCount(); break;
+                        case Aggregation.Types.Total:
+                            switch (data.Aggregation.Target)
+                            {
+                                default:
+                                    column.ParametersColumn(
+                                        columnName: data.Aggregation.Target,
+                                        function: Sqls.Functions.Sum);
+                                    break;
+                            }
+                            break;
+                        case Aggregation.Types.Average:
+                            switch (data.Aggregation.Target)
+                            {
+                                default:
+                                    column.ParametersColumn(
+                                        columnName: data.Aggregation.Target,
+                                        function: Sqls.Functions.Avg);
+                                    break;
+                            }
+                            break;
+                        default: break;
+                    }
+                    var statement = SelectParameters(
                         dataTableName: "Aggregation" + data.Index,
                         column: column,
                         where: where,
@@ -17510,6 +17967,42 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 delete from ""OutgoingMails"" {{0}}".Params(DeleteParams(tableName: "OutgoingMails"));
         }
 
+        public static string DeleteParametersStatement(ISqlObjectFactory factory)
+        {
+            return $@"
+                update ""Parameters""
+                set
+                    ""Updator"" = {Parameters.Parameter.SqlParameterPrefix}U,
+                    ""UpdatedTime"" = {factory.Sqls.CurrentDateTime} {{0}};
+                insert into ""Parameters_deleted""
+                (
+                    ""ParameterId"",
+                    ""Ver"",
+                    ""Title"",
+                    ""Body"",
+                    ""Comments"",
+                    ""Creator"",
+                    ""Updator"",
+                    ""CreatedTime"",
+                    ""UpdatedTime"" 
+                    {{1}}
+                )
+                (
+                select
+                    ""Parameters"".""ParameterId"",
+                    ""Parameters"".""Ver"",
+                    ""Parameters"".""Title"",
+                    ""Parameters"".""Body"",
+                    ""Parameters"".""Comments"",
+                    ""Parameters"".""Creator"",
+                    ""Parameters"".""Updator"",
+                    ""Parameters"".""CreatedTime"",
+                    ""Parameters"".""UpdatedTime""
+                    {{2}}
+                from ""Parameters"" {{0}});
+                delete from ""Parameters"" {{0}}".Params(DeleteParams(tableName: "Parameters"));
+        }
+
         public static string DeletePasskeysStatement(ISqlObjectFactory factory)
         {
             return $@"
@@ -17985,6 +18478,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                     ""Language"",
                     ""TimeZone"",
                     ""TenantSettings"",
+                    ""RestartScheduledTime"",
                     ""Comments"",
                     ""Creator"",
                     ""Updator"",
@@ -18016,6 +18510,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                     ""Tenants"".""Language"",
                     ""Tenants"".""TimeZone"",
                     ""Tenants"".""TenantSettings"",
+                    ""Tenants"".""RestartScheduledTime"",
                     ""Tenants"".""Comments"",
                     ""Tenants"".""Creator"",
                     ""Tenants"".""Updator"",
@@ -19099,6 +19594,46 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 delete from ""OutgoingMails_deleted"" {{0}}".Params(DeleteParams(tableName: "OutgoingMails"));
         }
 
+        public static string RestoreParametersStatement(ISqlObjectFactory factory)
+        {
+            return $@"
+                update ""Parameters_deleted""
+                set
+                    ""Updator"" = {Parameters.Parameter.SqlParameterPrefix}U,
+                    ""UpdatedTime"" = {factory.Sqls.CurrentDateTime} {{0}};
+                {factory.SqlCommandText.CreateIdentityInsert(
+    template: "set identity_insert \"Parameters\" on;")}
+                insert into ""Parameters""
+                (
+                    ""ParameterId"",
+                    ""Ver"",
+                    ""Title"",
+                    ""Body"",
+                    ""Comments"",
+                    ""Creator"",
+                    ""Updator"",
+                    ""CreatedTime"",
+                    ""UpdatedTime""
+                    {{2}}
+                )
+                (
+                select
+                    ""Parameters_deleted"".""ParameterId"",
+                    ""Parameters_deleted"".""Ver"",
+                    ""Parameters_deleted"".""Title"",
+                    ""Parameters_deleted"".""Body"",
+                    ""Parameters_deleted"".""Comments"",
+                    ""Parameters_deleted"".""Creator"",
+                    ""Parameters_deleted"".""Updator"",
+                    ""Parameters_deleted"".""CreatedTime"",
+                    ""Parameters_deleted"".""UpdatedTime"" 
+                    {{1}}
+                from ""Parameters_deleted"" {{0}});
+                {factory.SqlCommandText.CreateIdentityInsert(
+    template: "set identity_insert \"Parameters\" off;")}
+                delete from ""Parameters_deleted"" {{0}}".Params(DeleteParams(tableName: "Parameters"));
+        }
+
         public static string RestorePasskeysStatement(ISqlObjectFactory factory)
         {
             return $@"
@@ -19588,6 +20123,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                     ""Language"",
                     ""TimeZone"",
                     ""TenantSettings"",
+                    ""RestartScheduledTime"",
                     ""Comments"",
                     ""Creator"",
                     ""Updator"",
@@ -19619,6 +20155,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                     ""Tenants_deleted"".""Language"",
                     ""Tenants_deleted"".""TimeZone"",
                     ""Tenants_deleted"".""TenantSettings"",
+                    ""Tenants_deleted"".""RestartScheduledTime"",
                     ""Tenants_deleted"".""Comments"",
                     ""Tenants_deleted"".""Creator"",
                     ""Tenants_deleted"".""Updator"",
@@ -69367,6 +69904,2322 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 : self;
         }
 
+        public static ParametersColumnCollection ParametersColumn()
+        {
+            return new ParametersColumnCollection();
+        }
+
+        public class ParametersColumnCollection : SqlColumnCollection
+        {
+            public new ParametersColumnCollection Add(
+                string columnBracket = null,
+                string tableName = "Parameters",
+                string columnName = null,
+                string _as = null,
+                Sqls.Functions function = Sqls.Functions.None,
+                SqlStatement sub = null,
+                bool subPrefix = true)
+            {
+                base.Add(
+                    columnBracket: columnBracket,
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub,
+                    subPrefix: subPrefix);
+                return this;
+            }
+        }
+
+        public static ParametersJoinCollection ParametersJoin()
+        {
+            return new ParametersJoinCollection();
+        }
+
+        public class ParametersJoinCollection : SqlJoinCollection
+        {
+            public ParametersJoinCollection Add(params SqlJoin[] sqlJoinCollection)
+            {
+                sqlJoinCollection.ForEach(sqlJoin => base.Add(sqlJoin));
+                return this;
+            }
+        }
+
+        public static ParametersWhereCollection ParametersWhere()
+        {
+            return new ParametersWhereCollection();
+        }
+
+        public class ParametersWhereCollection : SqlWhereCollection
+        {
+            public ParametersWhereCollection Add(
+                string tableName = "Parameters",
+                string[] columnBrackets = null,
+                string name = null,
+                object value = null,
+                string _operator = "=",
+                string multiColumnOperator = " or ",
+                string multiParamOperator = " and ",
+                SqlStatement subLeft = null,
+                SqlStatement sub = null,
+                bool subPrefix = true,
+                string raw = null,
+                bool _using = true)
+            {
+                if (_using)
+                {
+                    Add(new SqlWhere(
+                        columnBrackets: columnBrackets,
+                        tableName: tableName,
+                        name: name,
+                        value: value,
+                        _operator: _operator,
+                        multiColumnOperator: multiColumnOperator,
+                        multiParamOperator: multiParamOperator,
+                        subLeft: subLeft,
+                        sub: sub,
+                        subPrefix: subPrefix,
+                        raw: raw));
+                }
+                return this;
+            }
+        }
+
+        public static ParametersGroupByCollection ParametersGroupBy()
+        {
+            return new ParametersGroupByCollection();
+        }
+
+        public class ParametersGroupByCollection : SqlGroupByCollection
+        {
+            public new ParametersGroupByCollection Add(
+                string columnBracket, string tableName = "Parameters")
+            {
+                Add(new SqlGroupBy(
+                    columnBracket: columnBracket,
+                    tableName: tableName));
+                return this;
+            }
+        }
+
+        public static ParametersHavingCollection ParametersHaving()
+        {
+            return new ParametersHavingCollection();
+        }
+
+        public class ParametersHavingCollection : SqlHavingCollection
+        {
+            public ParametersHavingCollection Add(
+                string columnBracket,
+                string tableName = "Parameters",
+                object value = null,
+                string _operator = "=",
+                Sqls.Functions function = Sqls.Functions.None)
+            {
+                Add(new SqlHaving(
+                    columnBracket: columnBracket,
+                    tableName: tableName,
+                    value: value,
+                    _operator: _operator,
+                    function: function));
+                return this;
+            }
+        }
+
+        public static ParametersOrderByCollection ParametersOrderBy()
+        {
+            return new ParametersOrderByCollection();
+        }
+
+        public class ParametersOrderByCollection : SqlOrderByCollection
+        {
+            public ParametersOrderByCollection Add(
+                string columnBracket,
+                SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+                string tableName = "Parameters",
+                Sqls.Functions function = Sqls.Functions.None)
+            {
+                Add(new SqlOrderBy(
+                    columnBracket: columnBracket,
+                    tableName: tableName,
+                    orderType: orderType,
+                    function: function));
+                return this;
+            }
+        }
+
+        public static ParametersParamCollection ParametersParam()
+        {
+            return new ParametersParamCollection();
+        }
+
+        public class ParametersParamCollection : SqlParamCollection
+        {
+            public new ParametersParamCollection Add(
+                string columnBracket = null,
+                string name = null,
+                object value = null,
+                SqlStatement sub = null,
+                string raw = null,
+                bool _using = true)
+            {
+                Add(new SqlParam(
+                    columnBracket: columnBracket,
+                    name: name,
+                    value: value,
+                    sub: sub,
+                    raw: raw,
+                    _using: _using));
+                return this;
+            }
+        }
+
+        public static string Parameters_Title_WhereLike(
+            ISqlObjectFactory factory,
+            string tableName = "Parameters",
+            string name = "SearchText",
+            bool forward = false,
+            bool escape = false,
+            bool negative = false)
+        {
+            return "(\"" + tableName + "\".\"Title\""
+                + (negative
+                    ? factory.Sqls.NotLike
+                    : factory.Sqls.Like)
+                + (forward
+                    ? string.Empty
+                    : factory.Sqls.WhereLikeTemplateForward)
+                + $"@{name}{factory.Sqls.WhereLikeTemplate}"
+                + (escape
+                    ? factory.Sqls.Escape
+                    : string.Empty)
+                + ")";
+        }
+
+        public static string Parameters_Body_WhereLike(
+            ISqlObjectFactory factory,
+            string tableName = "Parameters",
+            string name = "SearchText",
+            bool forward = false,
+            bool escape = false,
+            bool negative = false)
+        {
+            return "(\"" + tableName + "\".\"Body\""
+                + (negative
+                    ? factory.Sqls.NotLike
+                    : factory.Sqls.Like)
+                + (forward
+                    ? string.Empty
+                    : factory.Sqls.WhereLikeTemplateForward)
+                + $"@{name}{factory.Sqls.WhereLikeTemplate}"
+                + (escape
+                    ? factory.Sqls.Escape
+                    : string.Empty)
+                + ")";
+        }
+
+        public static ParametersColumnCollection ParametersColumn(
+            this ParametersColumnCollection self,
+            string columnName,
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            switch (columnName)
+            {
+                case "ParameterId":
+                    return self.ParameterId(_as: _as, function: function);
+                case "Ver":
+                    return self.Ver(_as: _as, function: function);
+                case "Title":
+                    return self.Title(_as: _as, function: function);
+                case "Body":
+                    return self.Body(_as: _as, function: function);
+                case "Comments":
+                    return self.Comments(_as: _as, function: function);
+                case "Creator":
+                    return self.Creator(_as: _as, function: function);
+                case "Updator":
+                    return self.Updator(_as: _as, function: function);
+                case "CreatedTime":
+                    return self.CreatedTime(_as: _as, function: function);
+                case "UpdatedTime":
+                    return self.UpdatedTime(_as: _as, function: function);
+                default:
+                    return Def.ExtendedColumnTypes.ContainsKey(columnName ?? string.Empty)
+                        ? self.Add(
+                            columnBracket: $"\"{columnName}\"",
+                            columnName: columnName,
+                            _as: _as,
+                            function: function)
+                        : self;
+            }
+        }
+
+        public static ParametersColumnCollection ParameterId(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "ParameterId",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"ParameterId\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_ParameterId(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "ParameterId",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"ParameterId\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection Ver(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Ver",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Ver\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_Ver(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Ver",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Ver\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection Title(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Title",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Title\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_Title(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Title",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Title\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection Body(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Body",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Body\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_Body(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Body",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Body\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection Comments(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Comments",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Comments\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_Comments(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Comments",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Comments\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection Creator(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Creator",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Creator\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_Creator(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Creator",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Creator\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection Updator(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Updator",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Updator\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_Updator(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "Updator",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Updator\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection CreatedTime(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "CreatedTime",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"CreatedTime\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_CreatedTime(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "CreatedTime",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"CreatedTime\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection UpdatedTime(
+            this ParametersColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "UpdatedTime",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"UpdatedTime\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Parameters_UpdatedTime(
+            this SqlColumnCollection self,
+            string tableName = "Parameters",
+            string columnName = "UpdatedTime",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"UpdatedTime\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static ParametersColumnCollection ParametersCount(
+            this ParametersColumnCollection self,
+            string _as = "ParametersCount")
+        {
+            return self.Add(
+                columnBracket: "*",
+                tableName: null,
+                _as: _as,
+                function: Sqls.Functions.Count);
+        }
+
+        public static ParametersWhereCollection ParameterId(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"ParameterId\"" },
+                    tableName: tableName,
+                    name: "ParameterId",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_ParameterId(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"ParameterId\"" },
+                    tableName: tableName,
+                    name: "ParameterId",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection Ver(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Ver\"" },
+                    tableName: tableName,
+                    name: "Ver",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Ver(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Ver\"" },
+                    tableName: tableName,
+                    name: "Ver",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection Title(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Title\"" },
+                    tableName: tableName,
+                    name: "Title",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Title(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Title\"" },
+                    tableName: tableName,
+                    name: "Title",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection Body(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Body\"" },
+                    tableName: tableName,
+                    name: "Body",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Body(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Body\"" },
+                    tableName: tableName,
+                    name: "Body",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection Comments(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Comments\"" },
+                    tableName: tableName,
+                    name: "Comments",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Comments(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Comments\"" },
+                    tableName: tableName,
+                    name: "Comments",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection Creator(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Creator\"" },
+                    tableName: tableName,
+                    name: "Creator",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Creator(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Creator\"" },
+                    tableName: tableName,
+                    name: "Creator",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection Updator(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Updator\"" },
+                    tableName: tableName,
+                    name: "Updator",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Updator(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Updator\"" },
+                    tableName: tableName,
+                    name: "Updator",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection CreatedTime(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"CreatedTime\"" },
+                    tableName: tableName,
+                    name: "CreatedTime",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_CreatedTime(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"CreatedTime\"" },
+                    tableName: tableName,
+                    name: "CreatedTime",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection UpdatedTime(
+            this ParametersWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"UpdatedTime\"" },
+                    tableName: tableName,
+                    name: "UpdatedTime",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_UpdatedTime(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"UpdatedTime\"" },
+                    tableName: tableName,
+                    name: "UpdatedTime",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersWhereCollection ParameterId_In(
+            this ParametersWhereCollection self,
+            IEnumerable<int> value = null,
+            string tableName = "Parameters",
+            SqlStatement sub = null,
+            bool negative = false,
+            bool _using = true)
+        {
+            if (!_using)
+            {
+                return self;
+            }
+            if (sub != null)
+            {
+                return self.Add(
+                    columnBrackets: new string[] { "\"ParameterId\"" },
+                    tableName: tableName,
+                    name: "ParameterId",
+                    _operator: !negative ? " in " : " not in ",
+                    sub: sub);
+            }
+            else if (value != null && value.Any())
+            {
+                return self.Add(
+                    columnBrackets: new string[] { "\"ParameterId\"" },
+                    tableName: tableName,
+                    name: "ParameterId",
+                    _operator: !negative ? " in " : " not in ",
+                    raw: "({0})".Params(value.Join()));
+            }
+            else
+            {
+                return !negative
+                    ? self.Add(raw: "1=0")
+                    : self;
+            }
+        }
+
+        public static ParametersWhereCollection Ver_In(
+            this ParametersWhereCollection self,
+            IEnumerable<int> value = null,
+            string tableName = "Parameters",
+            SqlStatement sub = null,
+            bool negative = false,
+            bool _using = true)
+        {
+            if (!_using)
+            {
+                return self;
+            }
+            if (sub != null)
+            {
+                return self.Add(
+                    columnBrackets: new string[] { "\"Ver\"" },
+                    tableName: tableName,
+                    name: "Ver",
+                    _operator: !negative ? " in " : " not in ",
+                    sub: sub);
+            }
+            else if (value != null && value.Any())
+            {
+                return self.Add(
+                    columnBrackets: new string[] { "\"Ver\"" },
+                    tableName: tableName,
+                    name: "Ver",
+                    _operator: !negative ? " in " : " not in ",
+                    raw: "({0})".Params(value.Join()));
+            }
+            else
+            {
+                return !negative
+                    ? self.Add(raw: "1=0")
+                    : self;
+            }
+        }
+
+        public static ParametersWhereCollection Creator_In(
+            this ParametersWhereCollection self,
+            IEnumerable<int> value = null,
+            string tableName = "Parameters",
+            SqlStatement sub = null,
+            bool negative = false,
+            bool _using = true)
+        {
+            if (!_using)
+            {
+                return self;
+            }
+            if (sub != null)
+            {
+                return self.Add(
+                    columnBrackets: new string[] { "\"Creator\"" },
+                    tableName: tableName,
+                    name: "Creator",
+                    _operator: !negative ? " in " : " not in ",
+                    sub: sub);
+            }
+            else if (value != null && value.Any())
+            {
+                return self.Add(
+                    columnBrackets: new string[] { "\"Creator\"" },
+                    tableName: tableName,
+                    name: "Creator",
+                    _operator: !negative ? " in " : " not in ",
+                    raw: "({0})".Params(value.Join()));
+            }
+            else
+            {
+                return !negative
+                    ? self.Add(raw: "1=0")
+                    : self;
+            }
+        }
+
+        public static ParametersWhereCollection Updator_In(
+            this ParametersWhereCollection self,
+            IEnumerable<int> value = null,
+            string tableName = "Parameters",
+            SqlStatement sub = null,
+            bool negative = false,
+            bool _using = true)
+        {
+            if (!_using)
+            {
+                return self;
+            }
+            if (sub != null)
+            {
+                return self.Add(
+                    columnBrackets: new string[] { "\"Updator\"" },
+                    tableName: tableName,
+                    name: "Updator",
+                    _operator: !negative ? " in " : " not in ",
+                    sub: sub);
+            }
+            else if (value != null && value.Any())
+            {
+                return self.Add(
+                    columnBrackets: new string[] { "\"Updator\"" },
+                    tableName: tableName,
+                    name: "Updator",
+                    _operator: !negative ? " in " : " not in ",
+                    raw: "({0})".Params(value.Join()));
+            }
+            else
+            {
+                return !negative
+                    ? self.Add(raw: "1=0")
+                    : self;
+            }
+        }
+
+        public static ParametersWhereCollection ParameterId_Between(
+            this ParametersWhereCollection self,
+            int begin,
+            int end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"ParameterId\"" },
+                    tableName: tableName,
+                    name: "ParameterId",
+                    _operator: " between ",
+                    raw: "{0} and {1} ".Params(begin, end))
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_ParameterId_Between(
+            this SqlWhereCollection self,
+            int begin,
+            int end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"ParameterId\"" },
+                    tableName: tableName,
+                    name: "ParameterId",
+                    _operator: " between ",
+                    raw: "{0} and {1} ".Params(begin, end))
+                : self;
+        }
+
+        public static ParametersWhereCollection Ver_Between(
+            this ParametersWhereCollection self,
+            int begin,
+            int end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Ver\"" },
+                    tableName: tableName,
+                    name: "Ver",
+                    _operator: " between ",
+                    raw: "{0} and {1} ".Params(begin, end))
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Ver_Between(
+            this SqlWhereCollection self,
+            int begin,
+            int end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Ver\"" },
+                    tableName: tableName,
+                    name: "Ver",
+                    _operator: " between ",
+                    raw: "{0} and {1} ".Params(begin, end))
+                : self;
+        }
+
+        public static ParametersWhereCollection Creator_Between(
+            this ParametersWhereCollection self,
+            int begin,
+            int end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Creator\"" },
+                    tableName: tableName,
+                    name: "Creator",
+                    _operator: " between ",
+                    raw: "{0} and {1} ".Params(begin, end))
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Creator_Between(
+            this SqlWhereCollection self,
+            int begin,
+            int end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Creator\"" },
+                    tableName: tableName,
+                    name: "Creator",
+                    _operator: " between ",
+                    raw: "{0} and {1} ".Params(begin, end))
+                : self;
+        }
+
+        public static ParametersWhereCollection Updator_Between(
+            this ParametersWhereCollection self,
+            int begin,
+            int end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Updator\"" },
+                    tableName: tableName,
+                    name: "Updator",
+                    _operator: " between ",
+                    raw: "{0} and {1} ".Params(begin, end))
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_Updator_Between(
+            this SqlWhereCollection self,
+            int begin,
+            int end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"Updator\"" },
+                    tableName: tableName,
+                    name: "Updator",
+                    _operator: " between ",
+                    raw: "{0} and {1} ".Params(begin, end))
+                : self;
+        }
+
+        public static ParametersWhereCollection CreatedTime_Between(
+            this ParametersWhereCollection self,
+            DateTime begin,
+            DateTime end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"CreatedTime\"" },
+                    tableName: tableName,
+                    name: "CreatedTime",
+                    _operator: " between ",
+                    raw: "'{0}' and '{1}' ".Params(begin, end))
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_CreatedTime_Between(
+            this SqlWhereCollection self,
+            DateTime begin,
+            DateTime end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"CreatedTime\"" },
+                    tableName: tableName,
+                    name: "CreatedTime",
+                    _operator: " between ",
+                    raw: "'{0}' and '{1}' ".Params(begin, end))
+                : self;
+        }
+
+        public static ParametersWhereCollection UpdatedTime_Between(
+            this ParametersWhereCollection self,
+            DateTime begin,
+            DateTime end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"UpdatedTime\"" },
+                    tableName: tableName,
+                    name: "UpdatedTime",
+                    _operator: " between ",
+                    raw: "'{0}' and '{1}' ".Params(begin, end))
+                : self;
+        }
+
+        public static SqlWhereCollection Parameters_UpdatedTime_Between(
+            this SqlWhereCollection self,
+            DateTime begin,
+            DateTime end,
+            string tableName = "Parameters",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"UpdatedTime\"" },
+                    tableName: tableName,
+                    name: "UpdatedTime",
+                    _operator: " between ",
+                    raw: "'{0}' and '{1}' ".Params(begin, end))
+                : self;
+        }
+
+        public static ParametersWhereCollection Sub(
+            this ParametersWhereCollection self,
+            SqlStatement sub,
+            object value = null,
+            string _operator = "=",
+            bool _using = true)
+        {
+            return _using 
+                ? self.Add(
+                    null, null, null, value, _operator, sub: sub)
+                : self;
+        }
+
+        public static ParametersGroupByCollection ParametersGroupBy(
+            this ParametersGroupByCollection self, string columnName, bool _using = true)
+        {
+            if (_using)
+            {
+                switch (columnName)
+                {
+                    case "ParameterId": return self.ParameterId();
+                    case "Ver": return self.Ver();
+                    case "Title": return self.Title();
+                    case "Body": return self.Body();
+                    case "Comments": return self.Comments();
+                    case "Creator": return self.Creator();
+                    case "Updator": return self.Updator();
+                    case "CreatedTime": return self.CreatedTime();
+                    case "UpdatedTime": return self.UpdatedTime();
+                    default:
+                        return Def.ExtendedColumnTypes.ContainsKey(columnName ?? string.Empty)
+                            ? self.Add(columnBracket: $"\"{columnName}\"")
+                            : self;
+                }
+            }
+            else
+            {
+                return self;
+            }
+        }
+
+        public static ParametersGroupByCollection ParameterId(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"ParameterId\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_ParameterId(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"ParameterId\"", tableName: tableName);
+        }
+
+        public static ParametersGroupByCollection Ver(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Ver\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_Ver(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Ver\"", tableName: tableName);
+        }
+
+        public static ParametersGroupByCollection Title(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Title\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_Title(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Title\"", tableName: tableName);
+        }
+
+        public static ParametersGroupByCollection Body(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Body\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_Body(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Body\"", tableName: tableName);
+        }
+
+        public static ParametersGroupByCollection Comments(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Comments\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_Comments(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Comments\"", tableName: tableName);
+        }
+
+        public static ParametersGroupByCollection Creator(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Creator\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_Creator(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Creator\"", tableName: tableName);
+        }
+
+        public static ParametersGroupByCollection Updator(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Updator\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_Updator(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"Updator\"", tableName: tableName);
+        }
+
+        public static ParametersGroupByCollection CreatedTime(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"CreatedTime\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_CreatedTime(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"CreatedTime\"", tableName: tableName);
+        }
+
+        public static ParametersGroupByCollection UpdatedTime(
+            this ParametersGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"UpdatedTime\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Parameters_UpdatedTime(
+            this SqlGroupByCollection self, string tableName = "Parameters")
+        {
+            return self.Add(columnBracket: "\"UpdatedTime\"", tableName: tableName);
+        }
+
+        public static ParametersHavingCollection ParametersCount(
+            this ParametersHavingCollection self,
+            object value = null,
+            string tableName = "Parameters",
+            string _operator = null)
+        {
+            return self.Add(
+                columnBracket: "*",
+                value: value,
+                tableName: tableName,
+                _operator: _operator,
+                function: Sqls.Functions.Count);
+        }
+
+        public static ParametersHavingCollection CreatedTime(
+            this ParametersHavingCollection self,
+            string tableName = "Parameters",
+            object value = null,
+            string _operator = "=",
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            return self.Add(
+                columnBracket: "CreatedTime",
+                tableName: tableName,
+                value: value,
+                _operator: _operator,
+                function: function);
+        }
+
+        public static ParametersHavingCollection UpdatedTime(
+            this ParametersHavingCollection self,
+            string tableName = "Parameters",
+            object value = null,
+            string _operator = "=",
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            return self.Add(
+                columnBracket: "UpdatedTime",
+                tableName: tableName,
+                value: value,
+                _operator: _operator,
+                function: function);
+        }
+
+        public static ParametersOrderByCollection ParameterId(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"ParameterId\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection Ver(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Ver\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection Title(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Title\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection Body(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Body\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection Comments(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Comments\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection Creator(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Creator\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection Updator(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Updator\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection CreatedTime(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"CreatedTime\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection UpdatedTime(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"UpdatedTime\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_ParameterId(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"ParameterId\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_Ver(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Ver\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_Title(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Title\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_Body(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Body\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_Comments(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Comments\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_Creator(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Creator\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_Updator(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"Updator\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_CreatedTime(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"CreatedTime\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Parameters_UpdatedTime(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Parameters",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"UpdatedTime\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static ParametersOrderByCollection ParametersCount(
+            this ParametersOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc)
+        {
+            return self.Add(
+                columnBracket: "*",
+                orderType: orderType,
+                function: Sqls.Functions.Count);
+        }
+
+        public static ParametersParamCollection ParameterId(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"ParameterId\"",
+                    name: "ParameterId",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_ParameterId(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"ParameterId\"",
+                    name: "ParameterId",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersParamCollection Ver(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Ver\"",
+                    name: "Ver",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_Ver(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Ver\"",
+                    name: "Ver",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersParamCollection Title(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Title\"",
+                    name: "Title",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_Title(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Title\"",
+                    name: "Title",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersParamCollection Body(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Body\"",
+                    name: "Body",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_Body(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Body\"",
+                    name: "Body",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersParamCollection Comments(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Comments\"",
+                    name: "Comments",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_Comments(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Comments\"",
+                    name: "Comments",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersParamCollection Creator(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Creator\"",
+                    name: "Creator",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_Creator(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Creator\"",
+                    name: "Creator",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersParamCollection Updator(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Updator\"",
+                    name: "Updator",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_Updator(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"Updator\"",
+                    name: "Updator",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersParamCollection CreatedTime(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"CreatedTime\"",
+                    name: "CreatedTime",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_CreatedTime(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"CreatedTime\"",
+                    name: "CreatedTime",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static ParametersParamCollection UpdatedTime(
+            this ParametersParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"UpdatedTime\"",
+                    name: "UpdatedTime",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Parameters_UpdatedTime(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"UpdatedTime\"",
+                    name: "UpdatedTime",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
         public static PasskeysColumnCollection PasskeysColumn()
         {
             return new PasskeysColumnCollection();
@@ -104046,6 +106899,8 @@ namespace Implem.Pleasanter.Libraries.DataSources
                     return self.TimeZone(_as: _as, function: function);
                 case "TenantSettings":
                     return self.TenantSettings(_as: _as, function: function);
+                case "RestartScheduledTime":
+                    return self.RestartScheduledTime(_as: _as, function: function);
                 case "Comments":
                     return self.Comments(_as: _as, function: function);
                 case "Creator":
@@ -104939,6 +107794,46 @@ namespace Implem.Pleasanter.Libraries.DataSources
             return _using
                 ? self.Add(
                     columnBracket: "\"TenantSettings\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static TenantsColumnCollection RestartScheduledTime(
+            this TenantsColumnCollection self,
+            string tableName = "Tenants",
+            string columnName = "RestartScheduledTime",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"RestartScheduledTime\"",
+                    tableName: tableName,
+                    columnName: columnName,
+                    _as: _as,
+                    function: function,
+                    sub: sub)
+                : self;
+        }
+
+        public static SqlColumnCollection Tenants_RestartScheduledTime(
+            this SqlColumnCollection self,
+            string tableName = "Tenants",
+            string columnName = "RestartScheduledTime",
+            string _as = null,
+            Sqls.Functions function = Sqls.Functions.None,
+            SqlStatement sub = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"RestartScheduledTime\"",
                     tableName: tableName,
                     columnName: columnName,
                     _as: _as,
@@ -106434,6 +109329,64 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 : self;
         }
 
+        public static TenantsWhereCollection RestartScheduledTime(
+            this TenantsWhereCollection self,
+            object value = null,
+            string tableName = "Tenants",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"RestartScheduledTime\"" },
+                    tableName: tableName,
+                    name: "RestartScheduledTime",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlWhereCollection Tenants_RestartScheduledTime(
+            this SqlWhereCollection self,
+            object value = null,
+            string tableName = "Tenants",
+            string _operator = "=",
+            string multiColumnOperator = " or ",
+            string multiParamOperator = " and ",
+            SqlStatement subLeft = null,
+            SqlStatement sub = null,
+            bool subPrefix = true,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"RestartScheduledTime\"" },
+                    tableName: tableName,
+                    name: "RestartScheduledTime",
+                    value: value,
+                    _operator: _operator,
+                    multiColumnOperator: multiColumnOperator,
+                    multiParamOperator: multiParamOperator,
+                    subLeft: subLeft,
+                    sub: sub,
+                    subPrefix: subPrefix,
+                    raw: raw)
+                : self;
+        }
+
         public static TenantsWhereCollection Comments(
             this TenantsWhereCollection self,
             object value = null,
@@ -107118,6 +110071,40 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 : self;
         }
 
+        public static TenantsWhereCollection RestartScheduledTime_Between(
+            this TenantsWhereCollection self,
+            DateTime begin,
+            DateTime end,
+            string tableName = "Tenants",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"RestartScheduledTime\"" },
+                    tableName: tableName,
+                    name: "RestartScheduledTime",
+                    _operator: " between ",
+                    raw: "'{0}' and '{1}' ".Params(begin, end))
+                : self;
+        }
+
+        public static SqlWhereCollection Tenants_RestartScheduledTime_Between(
+            this SqlWhereCollection self,
+            DateTime begin,
+            DateTime end,
+            string tableName = "Tenants",
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBrackets: new string[] { "\"RestartScheduledTime\"" },
+                    tableName: tableName,
+                    name: "RestartScheduledTime",
+                    _operator: " between ",
+                    raw: "'{0}' and '{1}' ".Params(begin, end))
+                : self;
+        }
+
         public static TenantsWhereCollection CreatedTime_Between(
             this TenantsWhereCollection self,
             DateTime begin,
@@ -107228,6 +110215,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                     case "Language": return self.Language();
                     case "TimeZone": return self.TimeZone();
                     case "TenantSettings": return self.TenantSettings();
+                    case "RestartScheduledTime": return self.RestartScheduledTime();
                     case "Comments": return self.Comments();
                     case "Creator": return self.Creator();
                     case "Updator": return self.Updator();
@@ -107507,6 +110495,18 @@ namespace Implem.Pleasanter.Libraries.DataSources
             this SqlGroupByCollection self, string tableName = "Tenants")
         {
             return self.Add(columnBracket: "\"TenantSettings\"", tableName: tableName);
+        }
+
+        public static TenantsGroupByCollection RestartScheduledTime(
+            this TenantsGroupByCollection self, string tableName = "Tenants")
+        {
+            return self.Add(columnBracket: "\"RestartScheduledTime\"", tableName: tableName);
+        }
+
+        public static SqlGroupByCollection Tenants_RestartScheduledTime(
+            this SqlGroupByCollection self, string tableName = "Tenants")
+        {
+            return self.Add(columnBracket: "\"RestartScheduledTime\"", tableName: tableName);
         }
 
         public static TenantsGroupByCollection Comments(
@@ -107987,6 +110987,23 @@ namespace Implem.Pleasanter.Libraries.DataSources
             return self;
         }
 
+        public static TenantsOrderByCollection RestartScheduledTime(
+            this TenantsOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Tenants",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"RestartScheduledTime\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
         public static TenantsOrderByCollection Comments(
             this TenantsOrderByCollection self,
             SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
@@ -108437,6 +111454,23 @@ namespace Implem.Pleasanter.Libraries.DataSources
             Sqls.Functions function = Sqls.Functions.None)
         {
             new List<string> { "\"TenantSettings\"" }.ForEach(columnBracket =>
+                self.Add(
+                    columnBracket: columnBracket,
+                    orderType: orderType,
+                    tableName: tableName,
+                    isNullValue: isNullValue,
+                    function: function));
+            return self;
+        }
+
+        public static SqlOrderByCollection Tenants_RestartScheduledTime(
+            this SqlOrderByCollection self,
+            SqlOrderBy.Types orderType = SqlOrderBy.Types.asc,
+            string tableName = "Tenants",
+            string isNullValue = null,
+            Sqls.Functions function = Sqls.Functions.None)
+        {
+            new List<string> { "\"RestartScheduledTime\"" }.ForEach(columnBracket =>
                 self.Add(
                     columnBracket: columnBracket,
                     orderType: orderType,
@@ -109283,6 +112317,40 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 ? self.Add(
                     columnBracket: "\"TenantSettings\"",
                     name: "TenantSettings",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static TenantsParamCollection RestartScheduledTime(
+            this TenantsParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"RestartScheduledTime\"",
+                    name: "RestartScheduledTime",
+                    value: value,
+                    sub: sub,
+                    raw: raw)
+                : self;
+        }
+
+        public static SqlParamCollection Tenants_RestartScheduledTime(
+            this SqlParamCollection self,
+            object value = null,
+            SqlStatement sub = null,
+            string raw = null,
+            bool _using = true)
+        {
+            return _using
+                ? self.Add(
+                    columnBracket: "\"RestartScheduledTime\"",
+                    name: "RestartScheduledTime",
                     value: value,
                     sub: sub,
                     raw: raw)
@@ -141348,6 +144416,136 @@ namespace Implem.Pleasanter.Libraries.DataSources
             return param;
         }
 
+        public static ParametersColumnCollection ParametersDefaultColumns()
+        {
+            var targets = Def.ColumnDefinitionCollection
+                .Where(columnDefinition => columnDefinition.TableName == "Parameters")
+                .Where(columnDefinition => !columnDefinition.LowSchemaVersion())
+                .Select(columnDefinition => columnDefinition.ColumnName)
+                .ToList();
+            var column = ParametersColumn()
+                .ParameterId(_using: targets.Contains("ParameterId"))
+                .Ver(_using: targets.Contains("Ver"))
+                .Title(_using: targets.Contains("Title"))
+                .Body(_using: targets.Contains("Body"))
+                .Comments(_using: targets.Contains("Comments"))
+                .Creator(_using: targets.Contains("Creator"))
+                .Updator(_using: targets.Contains("Updator"))
+                .CreatedTime(_using: targets.Contains("CreatedTime"))
+                .UpdatedTime(_using: targets.Contains("UpdatedTime"));
+            Def.ColumnDefinitionCollection
+                .Where(columnDefinition => columnDefinition.TableName == "Parameters")
+                .Where(columnDefinition => !columnDefinition.ExtendedColumnType.IsNullOrEmpty())
+                .ForEach(columnDefinition =>
+                    column.ParametersColumn(columnDefinition.ColumnName));
+            return column;
+        }
+
+        public static ParametersJoinCollection ParametersJoinDefault()
+        {
+            var join = ParametersJoin();
+            return join;
+        }
+
+        public static ParametersWhereCollection ParametersWhereDefault(
+            Context context, ParameterModel parameterModel)
+        {
+            return ParametersWhere()
+                .ParameterId(parameterModel.ParameterId);
+        }
+
+        public static ParametersParamCollection ParametersParamDefault(
+            Context context,
+            SiteSettings ss,
+            ParameterModel parameterModel,
+            bool setDefault = false,
+            bool otherInitValue = false)
+        {
+            var param = ParametersParam()
+                .Ver(parameterModel.Ver, _using: parameterModel.Ver_Updated(context) || setDefault || (otherInitValue && !parameterModel.Ver.InitialValue(context)))
+                .Title(parameterModel.Title.Value.MaxLength(1024), _using: parameterModel.Title_Updated(context) || (otherInitValue && !parameterModel.Title.InitialValue(context)))
+                .Body(parameterModel.Body, _using: parameterModel.Body_Updated(context) || (otherInitValue && !parameterModel.Body.InitialValue(context)))
+                .Comments(parameterModel.Comments.ToJson(), _using: parameterModel.Comments_Updated(context) || (otherInitValue && !parameterModel.Comments.InitialValue(context)));
+            parameterModel.ClassHash
+                .Where(o => Def.ExtendedColumnTypes.Get(o.Key) == "Class")
+                .Where(o => parameterModel.Class_Updated(columnName: o.Key)
+                    || (otherInitValue && !parameterModel.GetClass(columnName: o.Key)
+                        .InitialValue(context: context)))
+                .ForEach(o =>
+                    param.Add(
+                        columnBracket: $"\"{o.Key}\"",
+                        name: o.Key,
+                        value: o.Value.MaxLength(1024)));
+            parameterModel.NumHash
+                .Where(o => Def.ExtendedColumnTypes.Get(o.Key) == "Num")
+                .Where(o => parameterModel.Num_Updated(
+                    columnName: o.Key,
+                    column: ss?.GetColumn(
+                        context: context,
+                        columnName: o.Key),
+                    paramDefault: true)
+                        || (otherInitValue && !parameterModel.GetNum(columnName: o.Key)
+                            .InitialValue(context: context)))
+                                .ForEach(o =>
+                                {
+                                    if (o.Value?.Value != null)
+                                    {
+                                        param.Add(
+                                            columnBracket: $"\"{o.Key}\"",
+                                            name: o.Key,
+                                            value: o.Value.Value);
+                                    }
+                                    else
+                                    {
+                                        param.Add(
+                                            columnBracket: $"\"{o.Key}\"",
+                                            name: o.Key,
+                                                raw: "null");
+                                        }
+                                    });
+            parameterModel.DateHash
+                .Where(o => Def.ExtendedColumnTypes.Get(o.Key) == "Date")
+                .Where(o => parameterModel.Date_Updated(columnName: o.Key)
+                    || (otherInitValue && !parameterModel.GetDate(columnName: o.Key)
+                        .InitialValue(context: context)))
+                .ForEach(o =>
+                    param.Add(
+                        columnBracket: $"\"{o.Key}\"",
+                        name: o.Key,
+                        value: o.Value));
+            parameterModel.DescriptionHash
+                .Where(o => Def.ExtendedColumnTypes.Get(o.Key) == "Description")
+                .Where(o => parameterModel.Description_Updated(columnName: o.Key)
+                    || (otherInitValue && !parameterModel.GetDescription(columnName: o.Key)
+                        .InitialValue(context: context)))
+                .ForEach(o =>
+                    param.Add(
+                        columnBracket: $"\"{o.Key}\"",
+                        name: o.Key,
+                        value: o.Value ?? string.Empty));
+            parameterModel.CheckHash
+                .Where(o => Def.ExtendedColumnTypes.Get(o.Key) == "Check")
+                .Where(o => parameterModel.Check_Updated(columnName: o.Key)
+                    || (otherInitValue && !parameterModel.GetCheck(columnName: o.Key)
+                        .InitialValue(context: context)))
+                .ForEach(o =>
+                    param.Add(
+                        columnBracket: $"\"{o.Key}\"",
+                        name: o.Key,
+                        value: o.Value));
+            parameterModel.AttachmentsHash
+                .Where(o => Def.ExtendedColumnTypes.Get(o.Key) == "Attachments")
+                .Where(o => parameterModel.Attachments_Updated(columnName: o.Key)
+                    || (otherInitValue && !parameterModel.GetAttachments(columnName: o.Key)
+                        .InitialValue(context: context)))
+                .ForEach(o =>
+                    param.Add(
+                        columnBracket: $"\"{o.Key}\"",
+                        name: o.Key,
+                        value: o.Value?.RecordingJson() ?? string.Empty));
+            return param;
+        }
+
         public static PasskeysColumnCollection PasskeysDefaultColumns()
         {
             var targets = Def.ColumnDefinitionCollection
@@ -142627,6 +145825,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 .Language(_using: targets.Contains("Language"))
                 .TimeZone(_using: targets.Contains("TimeZone"))
                 .TenantSettings(_using: targets.Contains("TenantSettings"))
+                .RestartScheduledTime(_using: targets.Contains("RestartScheduledTime"))
                 .Comments(_using: targets.Contains("Comments"))
                 .Creator(_using: targets.Contains("Creator"))
                 .Updator(_using: targets.Contains("Updator"))
@@ -142682,6 +145881,7 @@ namespace Implem.Pleasanter.Libraries.DataSources
                 .Language(tenantModel.Language.MaxLength(32), _using: tenantModel.Language_Updated(context) || (otherInitValue && !tenantModel.Language.InitialValue(context)))
                 .TimeZone(tenantModel.TimeZone.MaxLength(32), _using: tenantModel.TimeZone_Updated(context) || (otherInitValue && !tenantModel.TimeZone.InitialValue(context)))
                 .TenantSettings(tenantModel.TenantSettings.RecordingJson(context: context), _using: tenantModel.TenantSettings_Updated(context) || (otherInitValue && !tenantModel.TenantSettings.InitialValue(context)))
+                .RestartScheduledTime(tenantModel.RestartScheduledTime, _using: tenantModel.RestartScheduledTime_Updated(context) || (otherInitValue && !tenantModel.RestartScheduledTime.InitialValue(context)))
                 .Comments(tenantModel.Comments.ToJson(), _using: tenantModel.Comments_Updated(context) || (otherInitValue && !tenantModel.Comments.InitialValue(context)));
             tenantModel.ClassHash
                 .Where(o => Def.ExtendedColumnTypes.Get(o.Key) == "Class")
