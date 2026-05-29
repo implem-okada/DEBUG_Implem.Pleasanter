@@ -1,0 +1,5 @@
+# Snowflake commercial license DLL. The CI (push_to_snowflake) generates it
+# transiently from a secret and bakes it into the image. It must never be
+# committed to this public repo (to prevent disclosure/recovery), so we ignore
+# it as a safety net against an accidental `git add` during local work.
+Implem.License.dll

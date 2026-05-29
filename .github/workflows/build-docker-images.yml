@@ -59,3 +59,50 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta2.outputs.tags }}
+  push_to_snowflake:
+    name: Build and push images to Snowflake (SPCS, dev)
+    needs: push_to_registry
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Install Snowflake CLI
+        uses: snowflakedb/snowflake-cli-action@v1.5
+      - name: Log in to Snowflake image registry
+        env:
+          SNOWFLAKE_AUTHENTICATOR: SNOWFLAKE_JWT
+          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+          SNOWFLAKE_PRIVATE_KEY_RAW: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+        run: snow spcs image-registry login -x
+      - name: Decode Snowflake license
+        env:
+          LICENSE_B64: ${{ secrets.SNOWFLAKE_LICENSE_B64 }}
+        run: |
+          if [ -z "$LICENSE_B64" ]; then
+            echo "::error::SNOWFLAKE_LICENSE_B64 is not set"; exit 1
+          fi
+          echo "$LICENSE_B64" | base64 -d > snowflake/docker/Implem.License.dll
+      - name: Build and push CodeDefiner (SPCS)
+        env:
+          REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
+        run: |
+          docker build --platform linux/amd64 \
+            -f snowflake/docker/Dockerfile.codedefiner \
+            -t "$REPO/pleasanter:codedefiner" \
+            snowflake/docker
+          docker push "$REPO/pleasanter:codedefiner"
+      - name: Build and push Pleasanter (SPCS)
+        env:
+          REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
+        run: |
+          docker build --platform linux/amd64 \
+            -f snowflake/docker/Dockerfile \
+            -t "$REPO/pleasanter:latest" \
+            snowflake/docker
+          docker push "$REPO/pleasanter:latest"
