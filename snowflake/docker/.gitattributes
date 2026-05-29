@@ -1,0 +1,7 @@
+# Pleasanter on Snowflake (SPCS) のコンテナビルド資源。
+# これらは Linux コンテナ内で実行/参照されるため、チェックアウトするホスト OS に
+# 関わらず必ず LF を維持する必要がある。entrypoint*.sh が CRLF になると
+# `#!/bin/bash` シバンが壊れ、コンテナが起動しないため。
+*.sh           text eol=lf
+Dockerfile     text eol=lf
+Dockerfile.*   text eol=lf
