@@ -2,28 +2,24 @@
 
 services:
   Implem.Pleasanter:
-    build:
-      context: .
-      dockerfile: ./Implem.Pleasanter/Dockerfile
     environment:
         - Implem.Pleasanter_Rds_PostgreSQL_SaConnectionString=${Implem_Pleasanter_Rds_PostgreSQL_SaConnectionString}
         - Implem.Pleasanter_Rds_PostgreSQL_OwnerConnectionString=${Implem_Pleasanter_Rds_PostgreSQL_OwnerConnectionString}
         - Implem.Pleasanter_Rds_PostgreSQL_UserConnectionString=${Implem_Pleasanter_Rds_PostgreSQL_UserConnectionString}
-    image: implem.pleasanter
+    image: implemokada/pleasanter:latest
     container_name: pleasanter
+    ports:
+      - "50001:8080"
     depends_on:
       - db
     networks:
       - default
   Implem.CodeDefiner:
-    build:
-      context: .
-      dockerfile: ./Implem.CodeDefiner/Dockerfile
     environment:
         - Implem.Pleasanter_Rds_PostgreSQL_SaConnectionString=${Implem_Pleasanter_Rds_PostgreSQL_SaConnectionString}
         - Implem.Pleasanter_Rds_PostgreSQL_OwnerConnectionString=${Implem_Pleasanter_Rds_PostgreSQL_OwnerConnectionString}
         - Implem.Pleasanter_Rds_PostgreSQL_UserConnectionString=${Implem_Pleasanter_Rds_PostgreSQL_UserConnectionString}
-    image: implem.codedefiner
+    image: implemokada/pleasanter:codedefiner
     container_name: codedefiner
     depends_on:
       - db
@@ -31,7 +27,7 @@ services:
       - default
   db:
     container_name: postgresql
-    image: postgres:15
+    image: postgres:18
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -39,7 +35,7 @@ services:
       - POSTGRES_HOST_AUTH_METHOD=scram-sha-256
       - POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - default
 networks:
