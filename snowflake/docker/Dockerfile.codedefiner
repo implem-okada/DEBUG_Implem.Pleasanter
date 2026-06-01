@@ -1,9 +1,5 @@
 FROM implem/pleasanter:codedefiner
 
-# Apply security patches and install psql for database auto-creation
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends postgresql-client \
-    && rm -rf /var/lib/apt/lists/*
-
 # Copy entrypoint script
 COPY entrypoint-codedefiner.sh /app/entrypoint-codedefiner.sh
 RUN chmod +x /app/entrypoint-codedefiner.sh
