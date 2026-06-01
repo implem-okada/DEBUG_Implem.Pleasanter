@@ -1,5 +1,3 @@
-# Pleasanter on SPCS (base image from official Docker Hub)
-# Uses implem/pleasanter:latest as base
 FROM implem/pleasanter:latest
 
 # Copy entrypoint script
