@@ -1,4 +1,4 @@
-FROM implem/pleasanter:latest
+FROM implemokada/pleasanter:latest
 
 # Copy entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh

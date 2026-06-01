@@ -1,8 +1,17 @@
 ﻿name: Publish Docker image
 
+# TEST: 個人 Fork でのワークフロー全体テスト用の一時編集（Git で revert 前提）。本番へはマージしない。
 on:
-  release:
-    types: [published]
+  workflow_dispatch:                       # TEST: 本番は release: published
+    inputs:
+      version:
+        description: "Image version tag"
+        default: "0.0.0-test"
+        required: true
+
+env:
+  DH_IMAGE: implemokada/pleasanter         # TEST: 本番は implem/pleasanter
+
 jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
@@ -11,10 +20,8 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v4
       - name: Split tag name
-        env:
-          RELEASETAG: ${{ github.event.release.tag_name }}
         id: split
-        run: echo "RELEASEVER=${RELEASETAG##Pleasanter_}" >> "$GITHUB_OUTPUT"
+        run: echo "RELEASEVER=${{ inputs.version }}" >> "$GITHUB_OUTPUT"   # TEST: 本番は release.tag_name から ##Pleasanter_ 除去
       - name: Test variable
         run: |
           echo ${{ steps.split.outputs.RELEASEVER }}
@@ -23,17 +30,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up Docker Buildx
+      - name: Set up Docker Buildx          # TEST: 本番は cloud ドライバ（Build Cloud）。Fork では既定 docker-container（amd64 のみ＝QEMU 不要）
         uses: docker/setup-buildx-action@v3
-        with:
-          version: "lab:latest"
-          driver: cloud
-          endpoint: "implem/pleasanter-release-builder"
       - name: Extract metadata (Pleasanter)
         id: meta1
         uses: docker/metadata-action@v5
         with:
-          images: implem/pleasanter
+          images: ${{ env.DH_IMAGE }}       # TEST: 本番は implem/pleasanter
           tags: |
             latest
             ${{ steps.split.outputs.RELEASEVER }}
@@ -42,21 +45,21 @@ jobs:
         with:
           context: .
           file: ./Implem.Pleasanter/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64            # TEST: 本番は linux/amd64,linux/arm64（arm64 カット）
           push: true
           tags: ${{ steps.meta1.outputs.tags }}
       - name: Extract metadata (CodeDefiner)
         id: meta2
         uses: docker/metadata-action@v5
         with:
-          images: implem/pleasanter
+          images: ${{ env.DH_IMAGE }}       # TEST: 本番は implem/pleasanter
           tags: codedefiner
       - name: Build and push (CodeDefiner)
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Implem.CodeDefiner/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64            # TEST: 本番は linux/amd64,linux/arm64（arm64 カット）
           push: true
           tags: ${{ steps.meta2.outputs.tags }}
   push_to_snowflake:

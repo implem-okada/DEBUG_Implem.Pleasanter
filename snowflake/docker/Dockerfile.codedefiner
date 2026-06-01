@@ -1,4 +1,4 @@
-FROM implem/pleasanter:codedefiner
+FROM implemokada/pleasanter:codedefiner
 
 # Copy entrypoint script
 COPY entrypoint-codedefiner.sh /app/entrypoint-codedefiner.sh
