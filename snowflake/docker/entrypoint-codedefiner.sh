@@ -21,8 +21,13 @@ PGHOST=${PGHOST:?PGHOST is required}
 PGPORT=${PGPORT:-5432}
 
 # ============================================================
-# Generate Rds.json for CodeDefiner
+# Build connection strings (passed via env vars at exec, see bottom)
 # ============================================================
+# We do NOT rewrite Rds.json. The base image already ships Rds.json with
+# Dbms=PostgreSQL and null connection strings, and CodeDefiner fills the
+# null values from the env vars below (Initializer.CoalesceEmpty), exactly
+# like the official docker-compose setup.
+#
 # Standard Pleasanter convention:
 #   Sa    -> system DB "postgres". Used by CodeDefiner to CREATE the
 #            application DB on first run.
@@ -51,21 +56,14 @@ PGPORT=${PGPORT:-5432}
 # Npgsql -> Postgres as "Implem.Pleasanter".
 # (libpq's "-c role=..." does NOT need this treatment because GUC role
 # lookup matches the rolname string exactly, with no list parsing.)
-cat > /app/Implem.Pleasanter/App_Data/Parameters/Rds.json << EOF
-{
-  "Dbms": "PostgreSQL",
-  "Provider": "Local",
-  "SaConnectionString": "Server=${PGHOST};Port=${PGPORT};Database=postgres;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true",
-  "OwnerConnectionString": "Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_Owner;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true",
-  "UserConnectionString": "Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_User;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true",
-  "SqlCommandTimeOut": 600,
-  "MinimumTime": 10,
-  "DeadlockRetryCount": 4,
-  "DeadlockRetryInterval": 1000
-}
-EOF
+SA_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=postgres;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
+OWNER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_Owner;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
+USER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_User;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
 
-echo "Generated Rds.json (Sa -> postgres, Owner/User -> #ServiceName# with SET role)"
+echo "Connection strings prepared (Sa -> postgres, Owner/User -> #ServiceName# with SET role; passwords masked):"
+echo "  Sa   : $(echo "$SA_CONNECTION_STRING"    | sed 's/pwd=[^;]*/pwd=****/')"
+echo "  Owner: $(echo "$OWNER_CONNECTION_STRING" | sed 's/pwd=[^;]*/pwd=****/')"
+echo "  User : $(echo "$USER_CONNECTION_STRING"  | sed 's/pwd=[^;]*/pwd=****/')"
 
 # ============================================================
 # Patch SQL files for Snowflake Postgres compatibility
@@ -271,5 +269,13 @@ echo "All Snowflake Postgres patches applied"
 #      schema and the tables, which therefore end up owned by the
 #      "_Owner" role.
 #   4. PrivilegeConfigurator grants DML on those tables to "_User".
+# Inject the connection strings as env vars (CoalesceEmpty fills Rds.json's
+# null values). The env var names contain dots (Service.Name =
+# "Implem.Pleasanter"), which the shell cannot export directly, so we use
+# the `env` command (it accepts arbitrary names).
 cd /app/Implem.CodeDefiner
-exec dotnet Implem.CodeDefiner.dll _rds /y
+exec env \
+  "Implem.Pleasanter_Rds_PostgreSQL_SaConnectionString=${SA_CONNECTION_STRING}" \
+  "Implem.Pleasanter_Rds_PostgreSQL_OwnerConnectionString=${OWNER_CONNECTION_STRING}" \
+  "Implem.Pleasanter_Rds_PostgreSQL_UserConnectionString=${USER_CONNECTION_STRING}" \
+  dotnet Implem.CodeDefiner.dll _rds /y
