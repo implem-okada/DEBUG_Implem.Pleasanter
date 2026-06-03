@@ -12,6 +12,7 @@ RUN jq '.EnableScreenManagement = true | .EnableRestart = true' /tmp/ParameterSe
 FROM base
 COPY --from=config /tmp/ParameterSetting.out.json /app/App_Data/Parameters/ParameterSetting.json
 COPY --from=config /tmp/Security.out.json         /app/App_Data/Parameters/Security.json
+COPY Implem.License.dll                           /app/Implem.License.dll
 
 # Copy entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh

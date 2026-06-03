@@ -1,4 +1,6 @@
 FROM implemokada/pleasanter:codedefiner
+COPY Implem.License.dll /app/Implem.CodeDefiner/Implem.License.dll
+COPY Implem.License.dll /app/Implem.Pleasanter/Implem.License.dll
 
 # Copy entrypoint script
 COPY entrypoint-codedefiner.sh /app/entrypoint-codedefiner.sh

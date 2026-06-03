@@ -83,6 +83,14 @@ jobs:
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_PRIVATE_KEY_RAW: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
         run: snow spcs image-registry login -x
+      - name: Decode Snowflake license
+        env:
+          LICENSE_B64: ${{ secrets.SNOWFLAKE_LICENSE_B64 }}
+        run: |
+          if [ -z "$LICENSE_B64" ]; then
+            echo "::error::SNOWFLAKE_LICENSE_B64 is not set"; exit 1
+          fi
+          echo "$LICENSE_B64" | base64 -d > snowflake/docker/Implem.License.dll
       - name: Build and push CodeDefiner (SPCS)
         env:
           REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
