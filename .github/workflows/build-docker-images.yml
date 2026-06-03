@@ -7,6 +7,9 @@ jobs:
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -37,6 +40,19 @@ jobs:
           tags: |
             latest
             ${{ steps.split.outputs.RELEASEVER }}
+      - name: Build for scan (Pleasanter)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Implem.Pleasanter/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: implem/pleasanter:scan-pleasanter
+      - name: Scan image (Pleasanter)
+        uses: ./.github/actions/scan-image
+        with:
+          image: implem/pleasanter:scan-pleasanter
+          category: pleasanter
       - name: Build and push (Pleasanter)
         uses: docker/build-push-action@v5
         with:
@@ -51,6 +67,19 @@ jobs:
         with:
           images: implem/pleasanter
           tags: codedefiner
+      - name: Build for scan (CodeDefiner)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Implem.CodeDefiner/Dockerfile
+          platforms: linux/amd64
+          load: true
+          tags: implem/pleasanter:scan-codedefiner
+      - name: Scan image (CodeDefiner)
+        uses: ./.github/actions/scan-image
+        with:
+          image: implem/pleasanter:scan-codedefiner
+          category: codedefiner
       - name: Build and push (CodeDefiner)
         uses: docker/build-push-action@v5
         with:
@@ -63,6 +92,9 @@ jobs:
     name: Build and push images to Snowflake (SPCS, dev)
     needs: push_to_registry
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
@@ -88,7 +120,7 @@ jobs:
             echo "::error::SNOWFLAKE_LICENSE_B64 is not set"; exit 1
           fi
           echo "$LICENSE_B64" | base64 -d > snowflake/docker/Implem.License.dll
-      - name: Build and push CodeDefiner (SPCS)
+      - name: Build CodeDefiner (SPCS)
         env:
           REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
         run: |
@@ -96,8 +128,16 @@ jobs:
             -f snowflake/docker/Dockerfile.codedefiner \
             -t "$REPO/pleasanter:codedefiner" \
             snowflake/docker
-          docker push "$REPO/pleasanter:codedefiner"
-      - name: Build and push Pleasanter (SPCS)
+      - name: Scan CodeDefiner (SPCS)
+        uses: ./.github/actions/scan-image
+        with:
+          image: ${{ vars.SNOWFLAKE_IMAGE_REPO }}/pleasanter:codedefiner
+          category: snowflake-codedefiner
+      - name: Push CodeDefiner (SPCS)
+        env:
+          REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
+        run: docker push "$REPO/pleasanter:codedefiner"
+      - name: Build Pleasanter (SPCS)
         env:
           REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
         run: |
@@ -105,4 +145,12 @@ jobs:
             -f snowflake/docker/Dockerfile \
             -t "$REPO/pleasanter:latest" \
             snowflake/docker
-          docker push "$REPO/pleasanter:latest"
+      - name: Scan Pleasanter (SPCS)
+        uses: ./.github/actions/scan-image
+        with:
+          image: ${{ vars.SNOWFLAKE_IMAGE_REPO }}/pleasanter:latest
+          category: snowflake-pleasanter
+      - name: Push Pleasanter (SPCS)
+        env:
+          REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
+        run: docker push "$REPO/pleasanter:latest"
