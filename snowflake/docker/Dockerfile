@@ -6,13 +6,16 @@ FROM alpine:3 AS config
 RUN apk add --no-cache jq
 COPY --from=base /app/App_Data/Parameters/ParameterSetting.json /tmp/ParameterSetting.json
 COPY --from=base /app/App_Data/Parameters/Security.json        /tmp/Security.json
+COPY --from=base /app/App_Data/Parameters/Service.json         /tmp/Service.json
 RUN jq '.EnableScreenManagement = true | .EnableRestart = true' /tmp/ParameterSetting.json > /tmp/ParameterSetting.out.json \
- && jq '.PrivilegedUsers = null' /tmp/Security.json > /tmp/Security.out.json
+ && jq '.PrivilegedUsers = null' /tmp/Security.json > /tmp/Security.out.json \
+ && jq '.DisableHtmlCache = true' /tmp/Service.json > /tmp/Service.out.json
 
 FROM base
 COPY --from=config /tmp/ParameterSetting.out.json /app/App_Data/Parameters/ParameterSetting.json
 COPY --from=config /tmp/Security.out.json         /app/App_Data/Parameters/Security.json
-COPY Implem.License.dll                           /app/Implem.License.dll
+COPY --from=config /tmp/Service.out.json          /app/App_Data/Parameters/Service.json
+COPY Implem.License.dll                            /app/Implem.License.dll
 
 # Copy entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh
