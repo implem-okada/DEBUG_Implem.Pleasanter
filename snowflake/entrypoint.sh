@@ -41,10 +41,7 @@ SA_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=postgres;uid=${SA
 OWNER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_Owner;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
 USER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_User;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
 
-echo "Connection strings (passwords masked):"
-echo "  Sa   : $(echo "$SA_CONNECTION_STRING"    | sed 's/pwd=[^;]*/pwd=****/')"
-echo "  Owner: $(echo "$OWNER_CONNECTION_STRING" | sed 's/pwd=[^;]*/pwd=****/')"
-echo "  User : $(echo "$USER_CONNECTION_STRING"  | sed 's/pwd=[^;]*/pwd=****/')"
+echo "Connection strings prepared (Sa -> postgres, Owner/User -> #ServiceName# with SET role)"
 
 # Start Pleasanter, injecting the connection strings as env vars.
 # The env var names contain dots (Service.Name = "Implem.Pleasanter"), which

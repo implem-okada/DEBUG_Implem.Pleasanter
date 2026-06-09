@@ -60,10 +60,7 @@ SA_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=postgres;uid=${SA
 OWNER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_Owner;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
 USER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_User;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
 
-echo "Connection strings prepared (Sa -> postgres, Owner/User -> #ServiceName# with SET role; passwords masked):"
-echo "  Sa   : $(echo "$SA_CONNECTION_STRING"    | sed 's/pwd=[^;]*/pwd=****/')"
-echo "  Owner: $(echo "$OWNER_CONNECTION_STRING" | sed 's/pwd=[^;]*/pwd=****/')"
-echo "  User : $(echo "$USER_CONNECTION_STRING"  | sed 's/pwd=[^;]*/pwd=****/')"
+echo "Connection strings prepared (Sa -> postgres, Owner/User -> #ServiceName# with SET role)"
 
 # ============================================================
 # Patch SQL files for Snowflake Postgres compatibility
