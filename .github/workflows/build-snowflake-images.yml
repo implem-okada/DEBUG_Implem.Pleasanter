@@ -13,11 +13,6 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v4
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Install Snowflake CLI
         uses: snowflakedb/snowflake-cli-action@v1.5
       - name: Log in to Snowflake image registry
