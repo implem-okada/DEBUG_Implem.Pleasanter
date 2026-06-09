@@ -37,9 +37,9 @@ PGPORT=${PGPORT:-5432}
 # Owner / User design. The schema name (= ServiceName, e.g. "Implem.Pleasanter")
 # contains a dot, so it is wrapped in literal double quotes in Search Path to
 # be parsed as a single quoted identifier.
-SA_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=postgres;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
-OWNER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_Owner;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
-USER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_User;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD};SSL Mode=Require;Trust Server Certificate=true"
+SA_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=postgres;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD}"
+OWNER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_Owner;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD}"
+USER_CONNECTION_STRING="Server=${PGHOST};Port=${PGPORT};Database=#ServiceName#;Search Path='\"#ServiceName#\"';Options=-c role=#ServiceName#_User;uid=${SA_PGUSER};pwd=${SA_PGPASSWORD}"
 
 echo "Connection strings (passwords masked):"
 echo "  Sa   : $(echo "$SA_CONNECTION_STRING"    | sed 's/pwd=[^;]*/pwd=****/')"
