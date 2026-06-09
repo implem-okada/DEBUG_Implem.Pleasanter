@@ -34,15 +34,15 @@ jobs:
           if [ -z "$LICENSE_B64" ]; then
             echo "::error::SNOWFLAKE_LICENSE_B64 is not set"; exit 1
           fi
-          echo "$LICENSE_B64" | base64 -d > snowflake/docker/Implem.License.dll
+          echo "$LICENSE_B64" | base64 -d > snowflake/Implem.License.dll
       - name: Build CodeDefiner
         env:
           REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
         run: |
           docker build --platform linux/amd64 \
-            -f snowflake/docker/Dockerfile.codedefiner \
+            -f snowflake/Dockerfile.codedefiner \
             -t "$REPO/pleasanter:codedefiner" \
-            snowflake/docker
+            snowflake
       - name: Scan CodeDefiner
         uses: ./.github/actions/scan-image
         with:
@@ -56,9 +56,9 @@ jobs:
           REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
         run: |
           docker build --platform linux/amd64 \
-            -f snowflake/docker/Dockerfile \
+            -f snowflake/Dockerfile \
             -t "$REPO/pleasanter:latest" \
-            snowflake/docker
+            snowflake
       - name: Scan Pleasanter
         uses: ./.github/actions/scan-image
         with:
