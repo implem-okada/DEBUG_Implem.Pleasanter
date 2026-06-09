@@ -60,7 +60,7 @@ runs:
 
         echo "::group::ClamAV scan"
         set +e
-        docker run --rm -v "${rootfs}:/scandir:ro" clamav/clamav:latest \
+        docker run --rm -v "${rootfs}:/scandir:ro" clamav/clamav:1.5 \
           sh -c "freshclam --quiet && clamscan -r --infected --no-summary /scandir"
         code=$?
         set -e
