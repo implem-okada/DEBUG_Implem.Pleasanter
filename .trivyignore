@@ -1,0 +1,20 @@
+# Trivy 脆弱性スキャンの除外リスト
+#
+# build-docker-images.yml の push 前ゲート（fixable な CRITICAL/HIGH をブロック）で
+# 緊急対応が必要なときに、特定の CVE を一時的に除外するためのファイル。
+# Trivy はリポジトリ直下のこのファイルを自動で読み込む。
+#
+# 使い方:
+#   - 1 行に 1 つ CVE ID（例: CVE-2024-12345）を記載すると、その脆弱性を無視する。
+#   - 安易に追加しない。必ず「理由 / 担当 / 解除予定日」をコメントで残すこと。
+#   - 解除予定日を過ぎたエントリは速やかに見直す（恒久放置を避ける）。
+#
+# 記載例:
+#   # libfoo の HIGH。upstream 修正待ち。リリース優先のため時限除外。
+#   # 担当: okada / 解除予定: 2026-07-01
+#   CVE-2026-00000
+#
+# 期限を Trivy 側で強制したい場合は .trivyignore.yaml（expiry-date 対応）への移行を検討する。
+# 参考: https://trivy.dev/latest/docs/configuration/filtering/
+
+# --- 以下に除外エントリを追記 ---

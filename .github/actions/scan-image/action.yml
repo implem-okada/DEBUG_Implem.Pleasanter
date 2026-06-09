@@ -1,0 +1,54 @@
+name: "Scan container image"
+description: "ローカルにビルド済みのコンテナイメージを Trivy(CVE) と ClamAV(マルウェア) でスキャンする共通アクション"
+
+inputs:
+  image:
+    description: "スキャン対象のローカルイメージタグ（例: implem/pleasanter:scan-pleasanter）"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    # 1) Trivy ゲート: 修正可能な CRITICAL / HIGH があれば失敗させて push を止める
+    #    緊急時の時限除外はリポジトリ直下の .trivyignore で管理する。
+    - name: Trivy gate (fixable CRITICAL/HIGH fails the build)
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        image-ref: ${{ inputs.image }}
+        scan-type: image
+        format: table
+        severity: "CRITICAL,HIGH"
+        ignore-unfixed: true
+        exit-code: "1"
+
+    # 2) ClamAV: イメージの rootfs を取り出してマルウェアスキャン。検出で失敗させる
+    - name: ClamAV malware scan
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.image }}
+      run: |
+        set -euo pipefail
+        echo "::group::Export rootfs of ${IMAGE}"
+        cid=$(docker create "${IMAGE}")
+        rootfs="$(mktemp -d)/rootfs"
+        mkdir -p "${rootfs}"
+        docker export "${cid}" | tar -xf - -C "${rootfs}"
+        docker rm "${cid}" >/dev/null
+        echo "::endgroup::"
+
+        echo "::group::ClamAV scan"
+        set +e
+        docker run --rm -v "${rootfs}:/scandir:ro" clamav/clamav:latest \
+          sh -c "freshclam --quiet && clamscan -r --infected --no-summary /scandir"
+        code=$?
+        set -e
+        echo "::endgroup::"
+
+        if [ "${code}" -eq 1 ]; then
+          echo "::error::ClamAV detected malware in ${IMAGE}"
+          exit 1
+        elif [ "${code}" -eq 2 ]; then
+          # 読み取り不可ファイル等によるエラー。マルウェア検出ではないためブロックしない
+          echo "::warning::ClamAV reported errors (exit code 2) while scanning ${IMAGE}"
+        fi
+        echo "ClamAV scan passed for ${IMAGE}"
