@@ -62,3 +62,6 @@ jobs:
         env:
           REPO: ${{ vars.SNOWFLAKE_IMAGE_REPO }}
         run: docker push "$REPO/pleasanter:latest"
+      - name: Remove Snowflake license
+        if: always()
+        run: rm -f snowflake/Implem.License.dll
